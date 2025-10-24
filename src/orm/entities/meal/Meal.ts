@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 import { MenuMeal } from '../menuMeal/MenuMeal';
+import { Rating } from '../rating/Rating';
 import { Recipe } from '../recipes/Recipe';
 
 export enum MealName {
@@ -20,6 +21,9 @@ export class Meal {
 
   @OneToMany(() => MenuMeal, (mm) => mm.meal)
   menuMeals: MenuMeal[];
+
+  @OneToMany(() => Rating, (rating) => rating.meal, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  ratings: Rating[];
 
   @Column({ name: 'Name', type: 'enum', enum: MealName })
   name: MealName;
