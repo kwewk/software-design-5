@@ -25,6 +25,9 @@ export class Meal {
   @OneToMany(() => Rating, (rating) => rating.meal, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   ratings: Rating[];
 
+  @Column({ name: 'Name', type: 'varchar', nullable: true })
+  name: string;
+
   @Column({ name: 'Name', type: 'enum', enum: MealName })
-  name: MealName;
+  mealName: MealName;
 }
