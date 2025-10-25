@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class Tables1761302091349 implements MigrationInterface {
-  name = 'Tables1761302091349';
+export class Tables1761421394622 implements MigrationInterface {
+  name = 'Tables1761421394622';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
@@ -39,28 +39,10 @@ export class Tables1761302091349 implements MigrationInterface {
     await queryRunner.query(`
             CREATE TABLE "Meal" (
                 "ID" BIGSERIAL NOT NULL,
-                "Name" "public"."Meal_name_enum" NOT NULL,
+                "Name" character varying,
+                "Meal_Name" "public"."Meal_name_enum" NOT NULL,
+                "photo" jsonb,
                 CONSTRAINT "PK_54c7e7ead5a69ca7d95d8a91608" PRIMARY KEY ("ID")
-            )
-        `);
-    await queryRunner.query(`
-            CREATE TABLE "Ingredient" (
-                "ID" BIGSERIAL NOT NULL,
-                "Name" character varying NOT NULL,
-                "Calorie_content" integer NOT NULL,
-                "Unit" character varying NOT NULL,
-                "Quantity" integer NOT NULL,
-                "user_id" bigint,
-                CONSTRAINT "PK_c510090447477482411c08272be" PRIMARY KEY ("ID")
-            )
-        `);
-    await queryRunner.query(`
-            CREATE TABLE "Recipe_ingredients" (
-                "ID" BIGSERIAL NOT NULL,
-                "Quantity" integer NOT NULL,
-                "ingredient_id" bigint,
-                "recipe_id" bigint,
-                CONSTRAINT "PK_0633c0e077e3eb04c4603551c1b" PRIMARY KEY ("ID")
             )
         `);
     await queryRunner.query(`
@@ -107,6 +89,26 @@ export class Tables1761302091349 implements MigrationInterface {
             )
         `);
     await queryRunner.query(`
+            CREATE TABLE "Ingredient" (
+                "ID" BIGSERIAL NOT NULL,
+                "Name" character varying NOT NULL,
+                "Calorie_content" integer NOT NULL,
+                "Unit" character varying NOT NULL,
+                "Quantity" integer NOT NULL,
+                "user_id" bigint,
+                CONSTRAINT "PK_c510090447477482411c08272be" PRIMARY KEY ("ID")
+            )
+        `);
+    await queryRunner.query(`
+            CREATE TABLE "Recipe_ingredients" (
+                "ID" BIGSERIAL NOT NULL,
+                "Quantity" integer NOT NULL,
+                "ingredient_id" bigint,
+                "recipe_id" bigint,
+                CONSTRAINT "PK_0633c0e077e3eb04c4603551c1b" PRIMARY KEY ("ID")
+            )
+        `);
+    await queryRunner.query(`
             ALTER TABLE "Menu"
             ADD CONSTRAINT "FK_94f39ebf077514d1cb048c44edb" FOREIGN KEY ("user_id") REFERENCES "User"("ID") ON DELETE CASCADE ON UPDATE CASCADE
         `);
@@ -125,18 +127,6 @@ export class Tables1761302091349 implements MigrationInterface {
     await queryRunner.query(`
             ALTER TABLE "Rating"
             ADD CONSTRAINT "FK_f6eedc16c37abffe0a57ce175af" FOREIGN KEY ("user_id") REFERENCES "User"("ID") ON DELETE CASCADE ON UPDATE CASCADE
-        `);
-    await queryRunner.query(`
-            ALTER TABLE "Ingredient"
-            ADD CONSTRAINT "FK_ab0c5a79e5169aaeb7b8f3f5d97" FOREIGN KEY ("user_id") REFERENCES "User"("ID") ON DELETE CASCADE ON UPDATE CASCADE
-        `);
-    await queryRunner.query(`
-            ALTER TABLE "Recipe_ingredients"
-            ADD CONSTRAINT "FK_1ea589f36a6795bf743a5f3dfbd" FOREIGN KEY ("ingredient_id") REFERENCES "Ingredient"("ID") ON DELETE CASCADE ON UPDATE CASCADE
-        `);
-    await queryRunner.query(`
-            ALTER TABLE "Recipe_ingredients"
-            ADD CONSTRAINT "FK_b321b033898d996e4fe632c34c6" FOREIGN KEY ("recipe_id") REFERENCES "Recipe"("ID") ON DELETE CASCADE ON UPDATE CASCADE
         `);
     await queryRunner.query(`
             ALTER TABLE "Recipe_edge"
@@ -166,9 +156,30 @@ export class Tables1761302091349 implements MigrationInterface {
             ALTER TABLE "Users_favorite_recipes"
             ADD CONSTRAINT "FK_62000ccc6f62b50f7976ce9fabe" FOREIGN KEY ("user_id") REFERENCES "User"("ID") ON DELETE CASCADE ON UPDATE CASCADE
         `);
+    await queryRunner.query(`
+            ALTER TABLE "Ingredient"
+            ADD CONSTRAINT "FK_ab0c5a79e5169aaeb7b8f3f5d97" FOREIGN KEY ("user_id") REFERENCES "User"("ID") ON DELETE CASCADE ON UPDATE CASCADE
+        `);
+    await queryRunner.query(`
+            ALTER TABLE "Recipe_ingredients"
+            ADD CONSTRAINT "FK_1ea589f36a6795bf743a5f3dfbd" FOREIGN KEY ("ingredient_id") REFERENCES "Ingredient"("ID") ON DELETE CASCADE ON UPDATE CASCADE
+        `);
+    await queryRunner.query(`
+            ALTER TABLE "Recipe_ingredients"
+            ADD CONSTRAINT "FK_b321b033898d996e4fe632c34c6" FOREIGN KEY ("recipe_id") REFERENCES "Recipe"("ID") ON DELETE CASCADE ON UPDATE CASCADE
+        `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`
+            ALTER TABLE "Recipe_ingredients" DROP CONSTRAINT "FK_b321b033898d996e4fe632c34c6"
+        `);
+    await queryRunner.query(`
+            ALTER TABLE "Recipe_ingredients" DROP CONSTRAINT "FK_1ea589f36a6795bf743a5f3dfbd"
+        `);
+    await queryRunner.query(`
+            ALTER TABLE "Ingredient" DROP CONSTRAINT "FK_ab0c5a79e5169aaeb7b8f3f5d97"
+        `);
     await queryRunner.query(`
             ALTER TABLE "Users_favorite_recipes" DROP CONSTRAINT "FK_62000ccc6f62b50f7976ce9fabe"
         `);
@@ -191,15 +202,6 @@ export class Tables1761302091349 implements MigrationInterface {
             ALTER TABLE "Recipe_edge" DROP CONSTRAINT "FK_9a4717de0caaaa35474e9d33efe"
         `);
     await queryRunner.query(`
-            ALTER TABLE "Recipe_ingredients" DROP CONSTRAINT "FK_b321b033898d996e4fe632c34c6"
-        `);
-    await queryRunner.query(`
-            ALTER TABLE "Recipe_ingredients" DROP CONSTRAINT "FK_1ea589f36a6795bf743a5f3dfbd"
-        `);
-    await queryRunner.query(`
-            ALTER TABLE "Ingredient" DROP CONSTRAINT "FK_ab0c5a79e5169aaeb7b8f3f5d97"
-        `);
-    await queryRunner.query(`
             ALTER TABLE "Rating" DROP CONSTRAINT "FK_f6eedc16c37abffe0a57ce175af"
         `);
     await queryRunner.query(`
@@ -215,6 +217,12 @@ export class Tables1761302091349 implements MigrationInterface {
             ALTER TABLE "Menu" DROP CONSTRAINT "FK_94f39ebf077514d1cb048c44edb"
         `);
     await queryRunner.query(`
+            DROP TABLE "Recipe_ingredients"
+        `);
+    await queryRunner.query(`
+            DROP TABLE "Ingredient"
+        `);
+    await queryRunner.query(`
             DROP TABLE "User"
         `);
     await queryRunner.query(`
@@ -228,12 +236,6 @@ export class Tables1761302091349 implements MigrationInterface {
         `);
     await queryRunner.query(`
             DROP TABLE "Recipe_edge"
-        `);
-    await queryRunner.query(`
-            DROP TABLE "Recipe_ingredients"
-        `);
-    await queryRunner.query(`
-            DROP TABLE "Ingredient"
         `);
     await queryRunner.query(`
             DROP TABLE "Meal"
