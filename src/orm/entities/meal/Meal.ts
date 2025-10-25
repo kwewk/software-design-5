@@ -30,4 +30,7 @@ export class Meal {
 
   @Column({ name: 'Meal_Name', type: 'enum', enum: MealName })
   mealName: MealName;
+
+  @Column({ type: 'jsonb', nullable: true })
+  photo: any;
 }
