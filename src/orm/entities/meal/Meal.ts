@@ -28,6 +28,6 @@ export class Meal {
   @Column({ name: 'Name', type: 'varchar', nullable: true })
   name: string;
 
-  @Column({ name: 'Name', type: 'enum', enum: MealName })
+  @Column({ name: 'Meal_Name', type: 'enum', enum: MealName })
   mealName: MealName;
 }
