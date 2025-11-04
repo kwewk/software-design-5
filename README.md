@@ -1,83 +1,139 @@
-#  TypeORM / Express / TypeScript RESTful API boilerplate
+# Лабораторно-практична робота №5
 
-[![CI][build-badge]][build-url]
-[![TypeScript][typescript-badge]][typescript-url]
-[![prettier][prettier-badge]][prettier-url]
-![Heisenberg](misc/heisenberg.png)
+### «Розширення бекенд-додатку власними сутностями та реалізація REST API»
 
-Boilerplate with focus on best practices and painless developer experience:
+---
 
-- Minimal setup that can be extended 🔧
-- Spin it up with single command 🌀
-- TypeScript first
-- RESTful APIs
-- JWT authentication with role based authorization
+## Реалізовані сутності та їх зв’язки
 
-## Requirements
+### Діаграма інформаційної системи
 
-- [Node v16+](https://nodejs.org/)
-- [Docker](https://www.docker.com/)
+![Домашній повар](images/Home_Cook_Remastered.jpg)
 
-## Running
+### Опис
 
-_Easily set up a local development environment with single command!_
+- **Meal** — містить інформацію про страви
+- **AppUser** — містить інформацію про користувачів
+- **Recipe** — містить інформацію про рецепти
+- Також реалізовано усі інші сутності з діаграми
 
-- clone the repo
-- `npm run docker:dev` 🚀
+## Реалізовані API ендпоінти
 
-Visit [localhost:4000](http://localhost:4000/) or if using Postman grab [config](/postman).
+### Meal
 
-### _What happened_ 💥
+- `POST /v1/meals` — створення запису
+- `GET /v1/meals` — отримання всіх записів
+- `GET /v1/meals/:id` — отримання запису за ID
+- `PATCH /v1/meals/:id` — оновлення запису
+- `DELETE /v1/meals/:id` — видалення запису
 
-Containers created:
+### Recipe
 
-- Postgres database container seeded with 💊 Breaking Bad characters in `Users` table (default credentials `user=walter`, `password=white` in [.env file](./.env))
-- Node (v16 Alpine) container with running boilerplate RESTful API service
-- and one Node container instance to run tests locally or in CI
+- `POST /v1/recipes` — створення запису
+- `GET /v1/recipes` — отримання всіх записів
+- `GET /v1/recipes/:id` — отримання запису за ID
+- `PATCH /v1/recipes/:id` — оновлення запису
+- `DELETE /v1/recipes/:id` — видалення запису
 
-## Features:
+### AppUser
 
-- [Express](https://github.com/expressjs/express) framework
-- [TypeScript v4](https://github.com/microsoft/TypeScript) codebase
-- [TypeORM](https://typeorm.io/) using Data Mapper pattern
-- [Docker](https://www.docker.com/) environment:
-  - Easily start local development using [Docker Compose](https://docs.docker.com/compose/) with single command `npm run docker:dev`
-  - Connect to different staging or production environments `npm run docker:[stage|prod]`
-  - Ready for **microservices** development and deployment.  
-    Once API changes are made, just build and push new docker image with your favourite CI/CD tool  
-    `docker build -t <username>/api-boilerplate:latest .`  
-    `docker push <username>/api-boilerplate:latest`
-  - Run unit, integration (or setup with your frontend E2E) tests as `docker exec -ti be_boilerplate_test sh` and `npm run test`
-- Contract first REST API design:
-  - never break API again with HTTP responses and requests payloads using [type definitions](./src/types/express/index.d.ts)
-  - Consistent schema error [response](./src/utils/response/custom-error/types.ts). Your frontend will always know how to handle errors thrown in `try...catch` statements 💪
-- JWT authentication and role based authorization using custom middleware
-- Set local, stage or production [environmental variables](./config) with [type definitions](./src/types/ProcessEnv.d.ts)
-- Logging with [morgan](https://github.com/expressjs/morgan)
-- Unit and integration tests with [Mocha](https://mochajs.org/) and [Chai](https://www.chaijs.com/)
-- Linting with [ESLint](https://eslint.org/)
-- [Prettier](https://prettier.io/) code formatter
-- Git hooks with [Husky](https://github.com/typicode/husky) and [lint-staged](https://github.com/okonet/lint-staged)
-- Automated npm & Docker dependency updates with [Renovate](https://github.com/renovatebot/renovate) (set to patch version only)
-- Commit messages must meet [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) format.  
-  After staging changes just run `npm run commit` and get instant feedback on your commit message formatting and be prompted for required fields by [Commitizen](https://github.com/commitizen/cz-cli)
+- `POST /v1/app-users` — створення запису
+- `GET /v1/app-users` — отримання всіх записів
+- `GET /v1/app-users/:id` — отримання запису за ID
+- `PATCH /v1/app-users/:id` — оновлення запису
+- `DELETE /v1/app-users/:id` — видалення запису
 
-## Other awesome boilerplates:
+---
 
-Each boilerplate comes with it's own flavor of libraries and setup, check out others:
+## Скріншоти з Postman:
 
-- [Express and TypeORM with TypeScript](https://github.com/typeorm/typescript-express-example)
-- [Node.js, Express.js & TypeScript Boilerplate for Web Apps](https://github.com/jverhoelen/node-express-typescript-boilerplate)
-- [Express boilerplate for building RESTful APIs](https://github.com/danielfsousa/express-rest-es2017-boilerplate)
-- [A delightful way to building a RESTful API with NodeJs & TypeScript by @w3tecch](https://github.com/w3tecch/express-typescript-boilerplate)
+Meals
 
-[build-badge]: https://github.com/mkosir/express-typescript-typeorm-boilerplate/actions/workflows/main.yml/badge.svg
-[build-url]: https://github.com/mkosir/express-typescript-typeorm-boilerplate/actions/workflows/main.yml
-[typescript-badge]: https://badges.frapsoft.com/typescript/code/typescript.svg?v=101
-[typescript-url]: https://github.com/microsoft/TypeScript
-[prettier-badge]: https://img.shields.io/badge/code_style-prettier-ff69b4.svg
-[prettier-url]: https://github.com/prettier/prettier
+POST /v1/meals
+![POST](images/meals_create.png)
 
-## Contributing
+GET /v1/meals
+![GET_LIST](images/meals_list.png)
 
-All contributions are welcome!
+GET /v1/meals/:id
+![GET](images/meals_show.png)
+
+PATCH /v1/meals/:id
+![UPDATE](images/meals_update.png)
+
+DELETE /v1/meals/:id
+![DELETE](images/meals_delete.png)
+
+Recipes
+
+POST /v1/recipes
+![POST](images/recipes_create.png)
+
+GET /v1/recipes
+![GET_LIST](images/recipes_list.png)
+
+GET /v1/recipes/:id
+![GET](images/recipes_show.png)
+
+PATCH /v1/recipes/:id
+![UPDATE](images/recipes_update.png)
+
+DELETE /v1/recipes/:id
+![DELETE](images/recipes_delete.png)
+
+AppUser
+POST /v1/app-users/:id
+![POST](images/appUser_create.png)
+
+GET /v1/app-users/:id
+![GET_LIST](images/appUser_list.png)
+
+GET /v1/app-users/:id
+![GET](images/appUser_show.png)
+
+PATCH /v1/app-users/:id
+![UPDATE](images/appUser_update.png)
+
+DELETE /v1/app-users/:id
+![DELETE](images/appUser_delete.png)
+
+
+# Лабораторно-практична робота №6
+
+## «Реалізація сервісного шару, DTO та валідації даних»
+
+## Структура застосунку та принципи роботи шарів
+
+### Middleware — перевірка вхідних даних
+
+- Аналізує запити перед передачею далі по ланцюгу.
+- Виявляє помилки у форматі чи структурі даних.
+- Повертає код 400, якщо дані не проходять перевірку.
+
+**Призначення:** забезпечує, щоб у контролер потрапляли лише валідні запити.
+
+### Controller — взаємодія між клієнтом і системою
+
+- Приймає перевірені дані.
+- Викликає відповідні методи сервісного шару.
+- Формує вихідні DTO для відповіді клієнту.
+
+**Призначення:** організовує обмін між HTTP-запитами та бізнес-логікою.
+
+- Service — основна логіка застосунку
+- Виконує операції, що стосуються правил домену.
+- Працює із репозиторієм, не залежачи від контролера.
+- Реалізує CRUD-операції та бізнес-процеси.
+
+**Призначення:** містить усю логіку, яка визначає поведінку системи.
+
+### Repository — робота з базою даних
+
+- Забезпечує взаємодію з ORM та таблицями БД.
+- Не містить бізнес-логіки чи HTTP-залежностей.
+- Використовується сервісом як джерело даних.
+
+**Призначення:** централізований шар для операцій з базою даних.
+
+## Приклади коду
+### Middleware
