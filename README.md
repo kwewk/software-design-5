@@ -137,3 +137,151 @@ DELETE /v1/app-users/:id
 
 ## Приклади коду
 ### Middleware
+```typescript
+import { Request, Response, NextFunction } from 'express';
+import validator from 'validator';
+
+import { MealName } from 'orm/entities/meal/Meal';
+import { CustomError } from 'utils/response/custom-error/CustomError';
+import { ErrorValidation } from 'utils/response/custom-error/types';
+
+export const validatorCreateMeal = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const { name, mealName } = req.body;
+  const errorsValidation: ErrorValidation[] = [];
+
+  if (!name || validator.isEmpty(String(name).trim())) {
+    errorsValidation.push({ name: 'Meal name is required' });
+  }
+
+  if (!mealName || validator.isEmpty(String(mealName).trim())) {
+    errorsValidation.push({ mealName: 'Meal type is required' });
+  } else {
+    const validMealNames = Object.values(MealName);
+    if (!validMealNames.includes(mealName)) {
+      errorsValidation.push({
+        mealName: `Meal type must be one of: ${validMealNames.join(', ')}`,
+      });
+    }
+  }
+
+  if (errorsValidation.length !== 0) {
+    const customError = new CustomError(
+      400,
+      'Validation',
+      'Create meal validation error',
+      null,
+      null,
+      errorsValidation,
+    );
+    return next(customError);
+  }
+
+  return next();
+};
+```
+
+### DTO
+```typescript
+import { AppUser } from 'orm/entities/users/AppUser';
+
+export class AppUserDto {
+  id: number;
+  userName: string;
+  isRegistered: boolean;
+  recipes?: Array<{
+    id: number;
+    description: string;
+    cookingTime: number;
+    meal?: {
+      id: number;
+      name: string;
+      mealType: string;
+    };
+  }>;
+
+  constructor(user: AppUser) {
+    this.id = user.id;
+    this.userName = user.name; // Перейменовано
+    this.isRegistered = user.isRegistered;
+
+    if (user.recipes && Array.isArray(user.recipes)) {
+      this.recipes = user.recipes.map((recipe) => ({
+        id: recipe.id,
+        description: recipe.description,
+        cookingTime: recipe.cookingTime,
+        meal: recipe.meal
+          ? {
+              id: recipe.meal.id,
+              name: recipe.meal.name,
+              mealType: recipe.meal.mealName,
+            }
+          : undefined,
+      }));
+    }
+  }
+}
+```
+
+### Service 
+```typescript
+import { getRepository, Repository } from 'typeorm';
+
+import { AppUser } from 'orm/entities/users/AppUser';
+
+export class AppUserService {
+  private userRepository: Repository<AppUser>;
+
+  constructor() {
+    this.userRepository = getRepository(AppUser);
+  }
+
+  async findAll(): Promise<AppUser[]> {
+    return await this.userRepository.find({
+      relations: ['recipes', 'recipes.meal'],
+    });
+  }
+
+  async findOne(id: string): Promise<AppUser | undefined> {
+    return await this.userRepository.findOne(id, {
+      relations: ['recipes', 'recipes.meal', 'menu', 'ratings'],
+    });
+  }
+
+  async create(data: { name: string; isRegistered?: boolean }): Promise<AppUser> {
+    const { name, isRegistered } = data;
+
+    const newUser = this.userRepository.create({
+      name,
+      isRegistered: isRegistered || false,
+    });
+
+    return await this.userRepository.save(newUser);
+  }
+
+  async update(id: string, data: { name?: string; isRegistered?: boolean }): Promise<AppUser> {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new Error(`App user with id:${id} not found`);
+    }
+
+    const { name, isRegistered } = data;
+
+    if (name !== undefined) user.name = name;
+    if (isRegistered !== undefined) user.isRegistered = isRegistered;
+
+    return await this.userRepository.save(user);
+  }
+
+  async delete(id: string): Promise<AppUser> {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new Error(`App user with id:${id} doesn't exist`);
+    }
+
+    await this.userRepository.delete(id);
+    return user;
+  }
+}
+```
+
+Скріншоти з Postman
