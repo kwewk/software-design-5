@@ -285,3 +285,8 @@ export class AppUserService {
 ```
 
 Скріншоти з Postman
+- Запит з некоректними даними
+  ![Error](images/Incorrect_request.png)
+
+- Успішний запит
+  ![Success](images/Correct_request.png)
